@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "dad.workspace-rules",
+  "name": "Workspace Rules",
+  "version": "1.0.0",
+  "author": "Dad",
+  "license": "MIT",
+  "description": "Always open selected apps on a chosen workspace. Pick an app from a dropdown, assign a workspace, and every new window of that app opens there.",
+  "kinds": [
+    "bar-widget"
+  ],
+  "entryPoints": {
+    "barWidget": "BarWidget.qml"
+  },
+  "barWidget": {
+    "displayName": "Workspace Rules",
+    "description": "Pin apps to always open on a given workspace",
+    "category": "Productivity",
+    "allowMultiple": false,
+    "defaultSection": "right",
+    "defaults": {
+      "defaultWorkspace": 3
+    },
+    "schema": [
+      {
+        "key": "defaultWorkspace",
+        "type": "number",
+        "label": "Default workspace"
+      }
+    ]
+  }
+}

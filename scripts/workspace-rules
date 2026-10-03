@@ -1,0 +1,70 @@
+#!/usr/bin/env python3
+"""Persist workspace rules for the Workspace Rules shell plugin.
+
+Rules live in rules.json next to this script so they survive shell
+restarts and hot reloads. Every command prints the full current rules
+array as JSON on stdout so the shell reloads state in one round trip.
+
+Usage:
+  workspace-rules get
+  workspace-rules add <appId> <label> <class> <workspace>
+  workspace-rules remove <appId>
+  workspace-rules clear
+"""
+import json
+import os
+import sys
+
+PLUGIN_DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+RULES_FILE = os.path.join(PLUGIN_DIR, "rules.json")
+
+
+def load():
+    try:
+        with open(RULES_FILE, "r", encoding="utf-8") as handle:
+            data = json.load(handle)
+        return data if isinstance(data, list) else []
+    except (OSError, ValueError):
+        return []
+
+
+def save(rules):
+    with open(RULES_FILE, "w", encoding="utf-8") as handle:
+        json.dump(rules, handle, indent=2)
+        handle.write("\n")
+
+
+def emit(rules):
+    print(json.dumps(rules, indent=2))
+
+
+def main():
+    args = sys.argv[1:]
+    action = args[0] if args else "get"
+    rules = load()
+    if action == "get":
+        emit(rules)
+    elif action == "add" and len(args) >= 5:
+        entry = {
+            "appId": args[1],
+            "label": args[2],
+            "class": args[3],
+            "workspace": int(args[4]),
+        }
+        rules = [rule for rule in rules if rule.get("appId") != entry["appId"]]
+        rules.append(entry)
+        save(rules)
+        emit(rules)
+    elif action == "remove" and len(args) >= 2:
+        rules = [rule for rule in rules if rule.get("appId") != args[1]]
+        save(rules)
+        emit(rules)
+    elif action == "clear":
+        save([])
+        emit([])
+    else:
+        sys.exit(2)
+
+
+if __name__ == "__main__":
+    main()

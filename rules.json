@@ -1,0 +1,8 @@
+[
+  {
+    "appId": "chromium",
+    "label": "Chromium",
+    "class": "chromium",
+    "workspace": 1
+  }
+]
